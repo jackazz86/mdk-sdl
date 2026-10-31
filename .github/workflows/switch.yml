@@ -1,0 +1,48 @@
+name: Build for Switch
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  switch-nro:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - name: Shader compiler (dxc, SPIR-V)
+        run: |
+          set -e
+          mkdir -p "$RUNNER_TEMP/dxc"
+          curl -sSL -o "$RUNNER_TEMP/dxc.tgz" https://github.com/microsoft/DirectXShaderCompiler/releases/download/v1.9.2609/linux_dxc_2026_09_28.x86_x64.tar.gz
+          tar -xzf "$RUNNER_TEMP/dxc.tgz" -C "$RUNNER_TEMP/dxc"
+          echo "DXC=$(find "$RUNNER_TEMP/dxc" -type f -name dxc | head -1)" >> "$GITHUB_ENV"
+      # The Switch runs Mono (.NET 9): the whole program is built for net9.0 (the repo's props say net10.0;
+      # changed in this job's checkout only).
+      - name: Publish the managed program
+        run: |
+          set -e
+          chmod +x "$DXC"
+          sed -i 's#<TargetFramework>net10.0</TargetFramework>#<TargetFramework>net9.0</TargetFramework>#' Directory.Build.props
+          dotnet publish src/Mdk.Switch/Mdk.Switch.csproj -c Release -o build/mdk-input "-p:DxcSpirv=$DXC"
+          rm -rf build/mdk-input/runtimes
+          find build/mdk-input -type f ! -name '*.dll' -delete
+          ls build/mdk-input
+      - uses: ./switch
+        id: nro
+        with:
+          managed-directory: build/mdk-input
+          profile: switch/nroforge.json
+          link-assemblies: 'true'
+          output-directory: build/mdk-output
+      # The NRO and the build info only (the SD tree and the AOT objects are ~700 MB); kept one day.
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: mdk-switch
+          retention-days: 1
+          path: |
+            build/mdk-output/mdk.nro
+            build/mdk-output/BUILD-INFO.json

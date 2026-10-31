@@ -9,11 +9,8 @@
 #   ubuntu-latest  ─► mdk-android.apk      (SPIR-V; Vulkan)
 name: build
 
+# Switch fork: the upstream build (five platforms) runs only when asked, not on every push.
 on:
-  push:
-    branches: ["**"]
-    tags: ["v*"]
-  pull_request:
   workflow_dispatch:
 
 env:

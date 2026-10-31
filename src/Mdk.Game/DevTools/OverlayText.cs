@@ -8,8 +8,21 @@ namespace Mdk.Game.DevTools;
 public readonly record struct MemorySample(long GcHeap, long WorkingSet, IReadOnlyList<int> Collections)
 {
     public static MemorySample Now() =>
-        new(GC.GetTotalMemory(false), Environment.WorkingSet,
+        new(GC.GetTotalMemory(false), WorkingSetOrZero(),
             Enumerable.Range(0, GC.MaxGeneration + 1).Select(GC.CollectionCount).ToList());
+
+    /// <summary>Environment.WorkingSet, 0 where the runtime has none (Mono on the Switch).</summary>
+    private static long WorkingSetOrZero()
+    {
+        try
+        {
+            return Environment.WorkingSet;
+        }
+        catch (Exception e) when (e is NotImplementedException or PlatformNotSupportedException)
+        {
+            return 0;
+        }
+    }
 }
 
 /// <summary>What the debug overlay shows of a frame: timings, draws, memory, the GPU and display

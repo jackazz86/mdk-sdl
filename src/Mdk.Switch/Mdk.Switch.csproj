@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Mdk.Switch</RootNamespace>
+    <AssemblyName>Mdk.Switch</AssemblyName>
+    <InvariantGlobalization>true</InvariantGlobalization>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Mdk.Game\Mdk.Game.csproj" />
+  </ItemGroup>
+</Project>

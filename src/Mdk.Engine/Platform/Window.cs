@@ -115,7 +115,8 @@ public sealed unsafe class Window : IDisposable
         SetIcon();
 
         // Typed text (names of saved games, cheats); not on a touch screen, where it opens the keyboard.
-        if (_touch == null)
+        // (The Switch has no keyboard: its SDL would open the on-screen one.)
+        if (_touch == null && !SwitchBridge.Enabled)
         {
             SDL_StartTextInput(Handle);
         }
@@ -125,6 +126,12 @@ public sealed unsafe class Window : IDisposable
     /// only reported: the game runs without it.</summary>
     private void SetIcon()
     {
+        // The Switch has no window icon, and its SDL 3.2 lacks SDL_LoadPNG_IO (3.4+).
+        if (SwitchBridge.Enabled)
+        {
+            return;
+        }
+
         var icon = AppIcon.Load();
         if (icon == null)
         {
@@ -360,6 +367,7 @@ public sealed unsafe class Window : IDisposable
         // The controls' physical size, on whichever display the window is.
         _touch?.Measure(UnitsPerMm, SafeArea);
 
+        SwitchBridge.Pump(Handle);
         SDL_Event e;
         while (SDL_PollEvent(&e))
         {

@@ -847,6 +847,19 @@ public sealed class Viewer : IScreen
         var name = (GameState.IndexOf(_level.Number) + 1).ToString(CultureInfo.InvariantCulture);
         var json = _scripts.Capture();
         Console.WriteLine($"snapshot hash {Snapshot.Hash(json)}, objects {_scripts.Objects.Count}");
+        // The Switch has no keyboard for the name prompt: save at once under the name it offers.
+        if (Mdk.Engine.Platform.SwitchBridge.Enabled)
+        {
+            var saved = SaveGames.In(_ui.UserFolder).Write(name, SnapshotSave(json));
+            if (saved)
+            {
+                _state.QuickSlot = name;
+            }
+
+            Notify(saved ? "Game saved" : "Can't save now");
+            return;
+        }
+
         _snapshotPrompt = new SavePrompt(_ui, new Fonts(_renderer, _ui.Fti, mods: _ui.CanvasMods()), SaveGames.In(_ui.UserFolder), SnapshotSave(json), name);
         _ui.Window.CaptureMouse(Capture.Off);
     }

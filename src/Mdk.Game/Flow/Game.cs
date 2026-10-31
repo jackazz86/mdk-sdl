@@ -200,7 +200,11 @@ public sealed class Game : IDisposable
     {
         _options = options;
         var folder = Environment.GetEnvironmentVariable(UserFolderVariable) ?? UserFolder();
-        WriteLog(folder);
+        // The Switch already sends the output to its SD log; mdk.log would flush every line to the card again.
+        if (!Mdk.Engine.Platform.SwitchBridge.Enabled)
+        {
+            WriteLog(folder);
+        }
         _saves = SaveGames.In(folder);
 
         // The original deletes LASTGAME.SAV when it quits.

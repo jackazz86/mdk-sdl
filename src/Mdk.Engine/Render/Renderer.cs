@@ -531,6 +531,12 @@ public sealed unsafe partial class Renderer : IDisposable
 
     private GpuInfo ReadGpuInfo()
     {
+        // The Switch's SDL 3.2 lacks SDL_GetGPUDeviceProperties (3.4+).
+        if (SwitchBridge.Enabled)
+        {
+            return new GpuInfo(GpuBackends.Of(SDL_GetGPUDeviceDriver(_device) ?? ""), "Switch GPU (NVK)", "");
+        }
+
         var properties = SDL_GetGPUDeviceProperties(_device);
         return new GpuInfo(GpuBackends.Of(SDL_GetGPUDeviceDriver(_device) ?? ""),
             SDL_GetStringProperty(properties, SDL_PROP_GPU_DEVICE_NAME_STRING, "") ?? "",

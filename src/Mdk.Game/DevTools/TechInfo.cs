@@ -20,7 +20,16 @@ public readonly record struct BuildInfo(string Version, string Runtime, Compilat
         // "1.0.0-beta.1+commit": the commit stays out.
         var plus = version.IndexOf('+', StringComparison.Ordinal);
         // Native AOT compiles nothing at run time (IsDynamicCodeSupported is off in JIT builds too).
-        var compilation = JitInfo.GetCompiledMethodCount() > 0 ? Compilation.Jit : Compilation.NativeAot;
+        // Mono (the Switch) does not implement JitInfo: it is AOT there.
+        var compilation = Compilation.NativeAot;
+        try
+        {
+            compilation = JitInfo.GetCompiledMethodCount() > 0 ? Compilation.Jit : Compilation.NativeAot;
+        }
+        catch (NotImplementedException)
+        {
+        }
+
         return new BuildInfo(plus < 0 ? version : version[..plus], Environment.Version.ToString(), compilation, Window.SdlVersion);
     }
 }

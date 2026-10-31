@@ -29,7 +29,7 @@ public sealed partial class MdkData
         }
 
         // The project folder placed within the MDK folder: walk up from the executable.
-        for (var dir = new DirectoryInfo(AppContext.BaseDirectory); dir != null; dir = dir.Parent)
+        for (var dir = AppContext.BaseDirectory.Length == 0 ? null : new DirectoryInfo(AppContext.BaseDirectory); dir != null; dir = dir.Parent)
         {
             candidates.Add(dir.FullName);
         }

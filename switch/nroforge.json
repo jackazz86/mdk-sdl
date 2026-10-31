@@ -1,0 +1,8 @@
+{
+  "app_id": "mdk",
+  "entry_assembly": "Mdk.Switch.dll",
+  "title": "MDK (unofficial Switch port)",
+  "author": "nemo22 (mdk-sdl), NroForge",
+  "version": "0.1.0",
+  "icon": "icon.jpg"
+}
