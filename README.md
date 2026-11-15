@@ -417,7 +417,8 @@ Options, Mods then switches them (enhanced look).
 
 Touch controls in play: the left part of the screen is a stick where the finger lands (walk,
 strafe; far pushes run), dragging elsewhere looks around, buttons on the right fire, jump, use
-the item, pick the next item, toggle sniper mode and zoom (+ / -), and pause (top right); all of them, and the stick's zone, can be moved and resized. Menus
+the item, pick the next item, toggle sniper mode and zoom (+ / -), and pause (top right); dragging
+the fire button aims while it fires; all of them, and the stick's zone, can be moved and resized. Menus
 take taps; Android's back button is Esc. A keyboard works as on the desktop.
 
 Not yet: typing save names (no on-screen keyboard), the console. Tested on the
@@ -427,9 +428,10 @@ The APK is signed with a debug key until a release key is set: to update, uninst
 first (that deletes its copy of the game files and the saves, not a folder played in place;
 the first start asks again).
 
-Building it needs the Android workload (`dotnet workload install android`), JDK 21 and the
-Android SDK's API 36 platform, and SPIR-V shaders (`-p:DxcSpirv=...`):
-`dotnet publish src/Mdk.Android -c Release -p:DxcSpirv=path/to/dxc` gives
+Building it needs the Android workload (`dotnet workload install android`), JDK 21, the
+Android SDK's API 36 platform, the NDK r27 for NativeAOT (`-p:AndroidNdkDirectory=...`; r30 fails
+to link) and SPIR-V shaders (`-p:DxcSpirv=...`):
+`dotnet publish src/Mdk.Android -c Release -p:DxcSpirv=path/to/dxc -p:AndroidNdkDirectory=path/to/ndk/27.x` gives
 `src/Mdk.Android/bin/Release/net10.0-android/publish/io.github.nemo22.mdk-Signed.apk`, signed
 with a debug key. CI signs with the `ANDROID_KEYSTORE` secret (base64 keystore;
 `ANDROID_KEYSTORE_PASS`, `ANDROID_KEY_ALIAS`) when it's set; without it every build has its own
@@ -522,7 +524,7 @@ collections are printed) and fails above 512 bytes a frame or on a gen 1-2 colle
   the game's flow (`Flow/`: screens, settings, saves), its menus (`Menu/`), the stream (`Stream/`)
   and the fall (`Fall/`).
 - `src/Mdk.App`: the program and its command line.
-- `src/Mdk.Android`: the Android app (SDL's activity, the game files' import, its dialogs).
+- `src/Mdk.Android`: the Android app (setup activity, SDL's activity in Java, the game files' import, its dialogs).
 - `shaders/`: HLSL shaders, compiled to DXIL, SPIR-V and MSL at build time (`bindings.hlsli`:
   SDL_GPU's bindings).
 - `docs/`: [the architecture and roadmap](docs/architecture.md). The knowledge base about MDK
