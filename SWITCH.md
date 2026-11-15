@@ -17,7 +17,7 @@ apart from the small edits listed below; `main` follows the original repository.
 
 | Path | What | Licence |
 | --- | --- | --- |
-| everything except `switch/` | **mdk-sdl 1.2.5** by Marek Draskaba, with the Switch changes listed below | **GPL-3.0** (`LICENSE`), copyright of the original author for his part; the modifications are marked and published under the same licence |
+| everything except `switch/` | **mdk-sdl 1.2.6** by Marek Draskaba, with the Switch changes listed below | **GPL-3.0** (`LICENSE`), copyright of the original author for his part; the modifications are marked and published under the same licence |
 | `switch/` | NroForge (runner, SDK patches, `nroforge.py`, ...), derived from mono-nx and a Switch port of another game; `switch/runner/native/` holds the pad and gyro code and the SDL3 symbol table of this port | MIT (`switch/LICENSE`), with the components in `switch/THIRD_PARTY_NOTICES.md` and `switch/licenses/` |
 | `switch/icon.jpg` | The NRO's icon: "MDK (1997)" pixel-art icon by swagmaster9000 from [SteamGridDB](https://www.steamgriddb.com/) | Not covered by any licence here; belongs to its author and the rights holders of the game |
 
@@ -26,7 +26,7 @@ licences (see `switch/licenses/`).
 
 ## Changes made to mdk-sdl for the Switch
 
-Marked as modifications of the original, as the GPL requires (`git diff v1.2.5 switch -- src`):
+Marked as modifications of the original, as the GPL requires (`git diff v1.2.6 switch -- src`):
 
 - `src/Mdk.Switch/` (new): the program that starts the game on the console.
 - `src/Mdk.Engine/Platform/SwitchBridge.cs` (new), `Window.cs`: the pad bridge hook; no on-screen
